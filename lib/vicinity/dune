@@ -1,0 +1,5 @@
+(library
+ (name vicinity)
+ (public_name vicinity)
+ (modules vicinity)
+)
