@@ -46,7 +46,7 @@ val make_response :
   -> int
   -> (View.key -> 'data -> View.key -> 'data -> int)
   -> 'data node View.t
-(** [view view_rnd my_nid my_data rnid recvd xchg_len distance] *)
+(** [view view_rnd my_nid my_data rnid rdata recvd xchg_len distance] *)
 
 val merge_recvd :
   'data node View.t

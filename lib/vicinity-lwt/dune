@@ -1,0 +1,12 @@
+(library
+ (name vicinity_lwt)
+ (public_name vicinity-lwt)
+ (modules vicinity_lwt)
+ (libraries
+  vicinity
+  lwt
+  lwt.unix
+ )
+ (preprocess
+  (pps lwt_ppx))
+)

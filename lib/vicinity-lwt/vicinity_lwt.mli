@@ -9,26 +9,32 @@ open Vicinity
 type 'data t
 
 val init :
-  View.key -> 'data -> 'data node View.t -> int -> int -> float
-  -> ('data t -> View.key -> 'data -> 'data View.t -> 'data View.t Lwt.t)
-  -> ('data t -> View.key -> 'data -> 'data node View.t -> 'data View.t -> 'data View.t Lwt.t)
+  View.key
+  -> 'data
+  -> 'data node View.t
+  -> int
+  -> int
+  -> float
+  -> (unit -> 'data node View.t)
+  -> (View.key -> 'data -> View.key -> 'data -> int)
+  -> ('data t -> View.key -> 'data -> 'data node View.t -> 'data node View.t Lwt.t)
+  -> ('data t -> View.key -> 'data -> 'data node View.t -> 'data node View.t -> 'data node View.t Lwt.t)
   -> ('data t -> View.key -> 'data -> 'data node View.t -> unit Lwt.t)
   -> 'data t
-(** [init my_nid my_data view view_size shuffle_size period send_cb recv_cb view_cb]
-    initialize configuration with:
-
-    - [my_nid] - peer ID of this node,
-    - [my_data] - data associated with [my_nid] in sent entries,
+(** [init my_nid my_data view view_len xchg_len period view_rnd distance send_cb recv_cb view_cb]
+    initializes a VICINITY instance with the following configuration:
+    - [my_nid] - ID of this node,
+    - [my_data] - data associated with [my_nid] in view,
     - [view] - map of neighbour entries with peer ID as key,
-    - [view_size] - max size of view,
-    - [shuffle_size] - number of entries to exchange at each period,
+    - [view_len] - max view length,
+    - [xchg_len] - number of entries to exchange at each period,
     - [period] - gossip period, in seconds,
-    - [transmit] - function to transmit view entries to a node
-    - [send_cb peer_id data entries] - send [entries] to peer [(peer_id, data)]
-    - [recv_cb my_nid my_node view recvd] - called after receiving entries
-      during an exchange; allows rewriting [recvd] entries with the returned value,
-      thus allows using a stream sampler to provide uniformly random nodes
-      instead of the possibly biased exchanged nodes
+    - [view_rnd] - function that returns the current view
+      of the random peer sampling service
+    - [distance] - function to calculate distance between two nodes
+    - [send_cb nid ndata xchg] - send [xchg] entries to node [(nid, ndata)]
+    - [recv_cb my_nid my_data view recvd] - called after receiving entries
+      during an exchange; allows rewriting [recvd] entries with the returned value
     - [view_cb my_nid my_node view] - called after the view has been updated
  *)
 
@@ -47,9 +53,12 @@ val run :
  **)
 
 val recv :
-  'data t -> View.key -> 'data -> 'data View.t
+  'data t
+  -> View.key
+  -> 'data
+  -> 'data node View.t
   -> 'data node View.t Lwt.t
-(** [recv t peer_id data recvd send_cb recv_cb]
+(** [recv t rnid rdata recvd]
     receive entries from a peer and send response;
     run [recv_cb] with received entries, and
     return updated view *)

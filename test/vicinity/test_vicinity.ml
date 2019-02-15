@@ -25,7 +25,7 @@ let opt2int v =
   | Some v -> v
   | None -> -1
 
-let get_view =
+let my_view =
   add "a" 7
     (add "b" 11
        (add "c" 13
@@ -35,7 +35,7 @@ let get_view =
                    (add "g" 37
                       View.empty))))))
 
-let get_recvd =
+let my_recvd =
   (add "V" 10
      (add "W" 20
         (add "X" 30
@@ -43,7 +43,7 @@ let get_recvd =
               (add "Z" 50
                  View.empty)))))
 
-let get_view_rnd =
+let my_view_rnd =
   add "A" 10
     (add "B" 20
        (add "C" 30
@@ -57,24 +57,24 @@ let distance _nid1 data1 _nid2 data2 =
   abs @@ data1 - data2
 
 let test_add _ctx =
-  let view = get_view in
+  let view = my_view in
   print_view "add" view;
   assert_equal (View.cardinal view) 7
 
 let test_xchg _ctx =
-  let view = get_view in
+  let view = my_view in
   let (nid, data, sent, _view) =
-    make_exchange view get_view_rnd my_nid my_data xchg_len distance in
+    make_exchange view my_view_rnd my_nid my_data xchg_len distance in
   printf "\nSEND TO %s (%d)\n" (opt2str nid) (opt2int data);
   print_xchg "SEND:" sent;
   print_newline ();
   assert_equal (View.cardinal sent) xchg_len
 
 let test_recv _ctx =
-  let view = get_view in
+  let view = my_view in
   let (nid, data, sent, view) =
-    make_exchange view get_view_rnd my_nid my_data xchg_len distance in
-  let recvd = get_recvd in
+    make_exchange view my_view_rnd my_nid my_data xchg_len distance in
+  let recvd = my_recvd in
   printf "\n\nSEND TO %s (%d)\n" (opt2str nid) (opt2int data);
   print_view "VIEW BEFORE:" view;
   print_xchg "SENT:" sent;
@@ -89,7 +89,7 @@ let test_recv _ctx =
   assert_equal (View.mem "X" view2) true;
   let (rnid, rdata) = ("x", 69) in
   let resp =
-    make_response view2 get_view_rnd my_nid my_data rnid rdata
+    make_response view2 my_view_rnd my_nid my_data rnid rdata
       recvd xchg_len distance in
   printf "\nRESPOND TO %s (%d)\n" rnid rdata;
   print_xchg "RESP:" resp;

@@ -1,0 +1,14 @@
+(tests
+ (names test_vicinity_lwt_one test_vicinity_lwt_two)
+ (package vicinity-lwt)
+ (libraries
+  vicinity
+  vicinity-lwt
+  lwt
+  oUnit
+  urps
+ )
+ (preprocess
+  (pps lwt_ppx)
+ )
+)
