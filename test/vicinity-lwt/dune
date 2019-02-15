@@ -6,7 +6,6 @@
   vicinity-lwt
   lwt
   oUnit
-  urps
  )
  (preprocess
   (pps lwt_ppx)
