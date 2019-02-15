@@ -1,4 +1,4 @@
-(** VICINITY *)
+(** VICINITY: P2P gossip-based topology management protocol *)
 
 type 'data node =
   {

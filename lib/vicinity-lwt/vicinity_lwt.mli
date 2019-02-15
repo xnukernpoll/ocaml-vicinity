@@ -1,6 +1,6 @@
-(** VICINITY *)
+(** VICINITY: P2P gossip-based topology management protocol *)
 
-(** {1 Vicinity_lwt} *)
+(** {2 Vicinity_lwt} *)
 
 (** High-level library implementing the VICINITY protocol using Lwt *)
 
