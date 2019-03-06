@@ -38,7 +38,7 @@ let init_xchg t xnid xdata sent view =
   | (Some nid, Some data) ->
      let%lwt recvd = t.send_cb t nid data sent in
      let%lwt recvd = t.recv_cb t t.my_nid t.my_data t.view recvd in
-     t.view <- merge_recvd view t.view_len t.my_nid t.my_data recvd t.distance;
+     t.view <- merge_recvd view t.view_len recvd t.my_nid t.my_data t.distance;
      let%lwt _ = t.view_cb t t.my_nid t.my_data t.view in
      Lwt.return t.view
   | _ ->
@@ -48,8 +48,8 @@ let init_xchg t xnid xdata sent view =
     pick a random node from [t.view] to gossip with every [t.period] seconds *)
 let rec run t =
   let (xnid, xdata, sent, xview)
-    = make_exchange t.view (t.view_rnd ()) t.my_nid t.my_data
-        t.xchg_len t.distance in
+    = make_exchange t.view (t.view_rnd ()) t.xchg_len
+        t.my_nid t.my_data t.distance in
   let%lwt view = timeout t.period (init_xchg t xnid xdata sent xview) in
   let%lwt _ = Lwt.return (
                   t.view <- match view with
@@ -59,9 +59,9 @@ let rec run t =
 
 (** receive entries from a peer and send response *)
 let recv t rnid rdata recvd =
-  let sent = make_response t.view (t.view_rnd ()) t.my_nid t.my_data
-               rnid rdata recvd t.xchg_len t.distance in
+  let sent = make_response t.view (t.view_rnd ()) t.xchg_len rnid rdata recvd
+               t.my_nid t.my_data t.distance in
   let%lwt _ = t.send_cb t rnid rdata sent in
   let%lwt recvd = t.recv_cb t t.my_nid t.my_data t.view recvd in
-  t.view <- merge_recvd t.view t.view_len t.my_nid t.my_data recvd t.distance;
+  t.view <- merge_recvd t.view t.view_len recvd t.my_nid t.my_data t.distance;
   Lwt.return t.view

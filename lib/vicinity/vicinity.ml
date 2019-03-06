@@ -60,14 +60,14 @@ let cmp_dist n1 n2 =
   else if n2.dist < n1.dist then 1
   else 0
 
-(** select [n] nodes closest to [nid] from [view]
-    using the [compare] function for sorting *)
-let select view rnid rdata n distance =
+(** select [n] nodes closest to [(nid, ndata)] from [view]
+    using the [distance] function for sorting *)
+let closest view nid ndata n distance =
   let dlist =
     List.stable_sort cmp_dist @@
       View.fold
         (fun id node lst ->
-          { dist = distance rnid rdata id node.data; id; node } :: lst
+          { dist = distance nid ndata id node.data; id; node } :: lst
         )
         view
         [] in
@@ -93,39 +93,39 @@ let select view rnid rdata n distance =
     [xchg] is the [xchg_len] nodes from view to send to [nid]
     [view] is the updated view with the age of all nodes increased
            and the node associated with [nid] removed *)
-let make_exchange view view_rnd my_nid my_data xchg_len distance =
+let make_exchange view view_rnd xchg_len my_nid my_data distance =
   match oldest view with
   | Some (onid, onode) ->
      let view = View.remove onid view in
      (Some onid,
       Some onode.data,
       (let uview = View.union (* prefer nodes from view *)
-                     (fun _nid data _data_rnd -> Some data)
+                     (fun _nid node _node_rnd -> Some node)
                      (add my_nid my_data view)
                      view_rnd in
-       select uview onid onode.data xchg_len distance),
+       closest uview onid onode.data xchg_len distance),
       inc_age view)
   | None ->
      (None, None, View.empty, view)
 
 (** respond to an exchange request from [nid] *)
-let make_response view view_rnd my_nid my_data rnid rdata recvd xchg_len distance =
+let make_response view view_rnd xchg_len rnid rndata recvd my_nid my_data distance =
   let uview = add my_nid my_data view in
   let uview = View.union (* prefer nodes from view *)
-                (fun _nid data _data_rnd -> Some data)
+                (fun _nid node _node_rnd -> Some node)
                 uview view_rnd in
   let uview = View.filter (* remove recvd nodes *)
                 (fun nid _node -> not @@ View.mem nid recvd)
                 uview in
-  select uview rnid rdata xchg_len distance
+  closest uview rnid rndata xchg_len distance
 
 (** merge nodes received during an exchange with current view,
     [my_nid] is the key associated with this node *)
-let merge_recvd view view_len my_nid my_data recvd distance =
+let merge_recvd view view_len recvd my_nid my_data distance =
   let recvd = zero_age recvd in
   let recvd = View.remove my_nid recvd in
   let uview = View.union
                (* prefer nodes from view *)
-                (fun _nid data _data_rnd -> Some data)
+                (fun _nid node _node_rnd -> Some node)
                 view recvd in
-  select uview my_nid my_data view_len distance
+  closest uview my_nid my_data view_len distance
