@@ -5,6 +5,10 @@ type 'data node =
     age: int;
     data: 'data;
   }
+(** a node's profile:
+    - [age]: age of this node profile, incremented after each gossip round
+    - [data]: application-specific data associated with the node
+ *)
 
 module View : module type of Map.Make(String)
 
@@ -65,8 +69,10 @@ val make_response :
 (** [view view_rnd xchg_len rnid rndata recvd my_nid my_data distance]
     responds to a gossip exchange initiated by [(rnid, rndata)]
 
-    selects a list of nodes for the response
+    returns [xchg_len] nodes closest to [rnid]
+    according to the [distance] function
     from the union of [view] and [view_rnd]
+    to be sent as a response to [rnid]
 
     - [view] is the current view of this node
     - [view_rnd] is the current view of the random peer sampling service
@@ -80,6 +86,7 @@ val merge_recvd :
   'data node View.t
   -> int
   -> 'data node View.t
+  -> int
   -> View.key
   -> 'data
   -> (View.key -> 'data -> View.key -> 'data -> int)
