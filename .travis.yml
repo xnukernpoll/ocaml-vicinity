@@ -13,8 +13,6 @@ env:
   - OCAML_VERSION=4.04 PACKAGE=vicinity-lwt PINS="vicinity:."
   - OCAML_VERSION=4.03 PACKAGE=vicinity
   - OCAML_VERSION=4.03 PACKAGE=vicinity-lwt PINS="vicinity:."
-  - OCAML_VERSION=4.02 PACKAGE=vicinity
-  - OCAML_VERSION=4.02 PACKAGE=vicinity-lwt PINS="vicinity:."
 os:
   - linux
   - osx
