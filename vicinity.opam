@@ -6,7 +6,7 @@ authors: ["TG x Thoth <*@tg-x.net>"]
 tags: [ "p2p" "overlay" "topology" "management" "clustering" "protocol" ]
 license: "MPL-2.0"
 homepage: "https://github.com/p2pcollab/ocaml-vicinity"
-doc: "https://p2pcollab.github.io/doc/ocaml-vicinity/vicinity/"
+doc: "https://p2pcollab.github.io/doc/vicinity/"
 dev-repo: "git+https://github.com/p2pcollab/ocaml-vicinity.git"
 bug-reports: "https://github.com/p2pcollab/ocaml-vicinity/issues"
 depends:
