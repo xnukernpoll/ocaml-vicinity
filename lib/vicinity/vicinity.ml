@@ -83,7 +83,7 @@ let closest view nid ndata n distance =
     - [my_nid] is the ID of this node,
     - [my_data] is the data associated with this node,
     - [view] is the current view of this node
-    - [view_rnd] is the current view of the random peer sampling service
+    - [view_ext] is the current view of the random peer sampling service
     - [xchg_len] is the number of nodes in the gossip exchange
     - [compare] is a compariso
 
@@ -93,7 +93,7 @@ let closest view nid ndata n distance =
     [xchg] is the [xchg_len] nodes from view to send to [nid]
     [view] is the updated view with the age of all nodes increased
            and the node associated with [nid] removed *)
-let make_exchange view view_rnd xchg_len my_nid my_data distance =
+let make_exchange view view_ext xchg_len my_nid my_data distance =
   match oldest view with
   | Some (onid, onode) ->
      let view = View.remove onid view in
@@ -102,18 +102,18 @@ let make_exchange view view_rnd xchg_len my_nid my_data distance =
       (let uview = View.union (* prefer nodes from view *)
                      (fun _nid node _node_rnd -> Some node)
                      (add my_nid my_data view)
-                     view_rnd in
+                     view_ext in
        closest uview onid onode.data xchg_len distance),
       inc_age view)
   | None ->
      (None, None, View.empty, view)
 
 (** respond to an exchange request from [nid] *)
-let make_response view view_rnd xchg_len rnid rndata recvd my_nid my_data distance =
+let make_response view view_ext xchg_len rnid rndata recvd my_nid my_data distance =
   let uview = add my_nid my_data view in
   let uview = View.union (* prefer nodes from view *)
                 (fun _nid node _node_rnd -> Some node)
-                uview view_rnd in
+                uview view_ext in
   let uview = View.filter (* remove recvd nodes *)
                 (fun nid _node -> not @@ View.mem nid recvd)
                 uview in

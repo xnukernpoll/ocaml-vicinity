@@ -58,7 +58,7 @@ val recv :
   -> 'data
   -> 'data node View.t
   -> 'data node View.t Lwt.t
-(** [recv t rnid rdata recvd]
-    receive entries from a peer and send response;
-    run [recv_cb] with received entries, and
-    return updated view *)
+(** [recv_gossip t nid ndata recvd]
+    receives a gossip message from a node ([nid, ndata]) and sends a response;
+    runs [recv_cb] with the received entries, and
+    returns the updated view *)

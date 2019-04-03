@@ -37,12 +37,12 @@ val make_exchange :
   -> 'data
   -> (View.key -> 'data -> View.key -> 'data -> int)
   -> (View.key option * 'data option * 'data node View.t * 'data node View.t)
-(** [view view_rnd xchg_len my_nid my_data distance]
+(** [view view_ext xchg_len my_nid my_data distance]
     selects a node to exchange with and a list of nodes to send
-    from the union of [view] and [view_rnd]
+    from the union of [view] and [view_ext]
 
     - [view] is the current view of this node
-    - [view_rnd] is the current view of the random peer sampling service
+    - [view_ext] is the current view of the random peer sampling service
     - [xchg_len] is the number of nodes in the gossip exchange
     - [my_nid] is the ID of this node,
     - [my_data] is the data associated with this node,
@@ -66,16 +66,16 @@ val make_response :
   -> 'data
   -> (View.key -> 'data -> View.key -> 'data -> int)
   -> 'data node View.t
-(** [view view_rnd xchg_len rnid rndata recvd my_nid my_data distance]
+(** [view view_ext xchg_len rnid rndata recvd my_nid my_data distance]
     responds to a gossip exchange initiated by [(rnid, rndata)]
 
     returns [xchg_len] nodes closest to [rnid]
     according to the [distance] function
-    from the union of [view] and [view_rnd]
+    from the union of [view] and [view_ext]
     to be sent as a response to [rnid]
 
     - [view] is the current view of this node
-    - [view_rnd] is the current view of the random peer sampling service
+    - [view_ext] is the current view of the random peer sampling service
     - [xchg_len] is the number of nodes in the gossip exchange
     - [my_nid] is the ID of this node
     - [my_data] is the data associated with this node
